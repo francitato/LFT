@@ -1,3 +1,0 @@
-/* calcolare la velocita‘
-// distanza
-tempo
