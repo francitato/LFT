@@ -1,0 +1,7 @@
+read[x,y];
+conditional [
+	option (> x y) do print[1]
+	option (== x y) do print[2]
+	option (< x y) do print[3]
+	]
+	end
