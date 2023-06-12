@@ -105,6 +105,7 @@ public class Translator {
             case Tag.WHILE:
                 int Loop = code.newLabel();
                 int whileTrue = code.newLabel();
+                code.emit(OpCode.GOto, Loop);
                 code.emitLabel(Loop);
                 match(Tag.WHILE);
                 match('(');
@@ -138,6 +139,7 @@ public class Translator {
             case Tag.END:
                 match(Tag.END);
                 code.emitLabel(condElse);
+                code.emit(OpCode.GOto, lnext_stat);
                 break;
             case Tag.ELSE:
                 match(Tag.ELSE);
@@ -199,23 +201,24 @@ public class Translator {
                 error("Syntax error idlistp");
         }
     }
-    
+
     private void optlist(int condTrue, int condFalse, int condElse, int lnext_stat) {
         if (look.tag == Tag.OPTION) {
             optitem(condTrue, condFalse, lnext_stat);
-            code.emitLabel(condFalse);
-            int condNextTrue = code.newLabel();
-            optlistp(condNextTrue, condElse, lnext_stat);
+            optlistp(condTrue, condFalse, condElse, lnext_stat);
+            code.emit(OpCode.GOto, condElse);
         } else {
             error("Syntax error optlist");
         }
     }
 
-    private void optlistp(int condTrue, int condFalse, int lnext_stat) {
+    private void optlistp(int condTrue, int condFalse, int condElse, int lnext_stat) {
         switch (look.tag) {
             case Tag.OPTION:
-                optitem(condTrue, condFalse, lnext_stat);
-                optlistp(condTrue, condFalse, lnext_stat);
+                int condNextTrue = code.newLabel();
+                int condNextFalse = code.newLabel();
+                optitem(condNextTrue, condNextFalse, lnext_stat);
+                optlistp(condNextTrue, condNextFalse, condElse, lnext_stat);
                 break;
             case ']':
                 break;
@@ -233,6 +236,7 @@ public class Translator {
             match(')');
             match(Tag.DO);
             stat(lnext_stat);
+            code.emitLabel(condFalse);
         } else {
             error("Syntax error optitem");
         }
