@@ -72,22 +72,22 @@ public class Lexer {
                 } else if (peek == '*') {
                     readch(br);
                     boolean closed = false;
-                    while (!closed && peek != (char) -1) {
+                    while (peek == '\n' || !closed && peek != (char) -1) {
+                        readch(br);
                         if (peek == '*') {
                             readch(br);
-                            if (peek == '/') {
+                            if (peek == '/')
                                 closed = true;
-                            }
                         }
-                        readch(br);
-                    }
-                    if (!closed && peek == (char) -1) {
-                        System.err.println("Comment not closed ");
-                        return null;
-                    } else {
-                        return lexical_scan(br);
                     }
 
+                    if (!closed) {
+                        System.out.println("Comment not closed ");
+                        return new Token(Tag.EOF);
+                    } else {
+                        readch(br);
+                        return lexical_scan(br);
+                    }
                 } else {
                     peek = ' ';
                     return Word.lt;
@@ -204,14 +204,24 @@ public class Lexer {
                             }
                     }
                 } else if (Character.isDigit(peek)) {
-                    while (Character.isDigit(peek)) {
-                        tmp += Character.toString(peek);
+                    if (peek == '0') {
+                        tmp = tmp + peek;
                         readch(br);
-                    }
-                    if (Character.isLetter(peek) || peek == '_') {
-                        System.err.println("Erroneous character"
-                                + " Sequence start with number ");
-                        return null;
+                        if (Character.isDigit(peek)) {
+                            System.err.println("Erroneous character"
+                                    + " Sequence start with number 0");
+                            return null;
+                        } 
+                    } else {
+                        while (Character.isDigit(peek)) {
+                            tmp += Character.toString(peek);
+                            readch(br);
+                        }
+                        if (Character.isLetter(peek) || peek == '_') {
+                            System.err.println("Erroneous character"
+                                    + " Sequence start with number ");
+                            return null;
+                        }
                     }
                     return new NumberTok(Tag.NUM, Integer.parseInt(tmp));
                 } else {
