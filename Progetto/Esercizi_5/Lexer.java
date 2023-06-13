@@ -70,7 +70,6 @@ public class Lexer {
                     }
                     return lexical_scan(br);
                 } else if (peek == '*') {
-                    readch(br);
                     boolean closed = false;
                     while (peek == '\n' || !closed && peek != (char) -1) {
                         readch(br);
@@ -82,8 +81,8 @@ public class Lexer {
                     }
 
                     if (!closed) {
-                        System.out.println("Comment not closed ");
-                        return new Token(Tag.EOF);
+                        System.err.println("Comment not closed");
+                        return null;
                     } else {
                         readch(br);
                         return lexical_scan(br);
@@ -199,7 +198,7 @@ public class Lexer {
                                 return new Word(Tag.ID, tmp);
                             } else {
                                 System.err.println("Erroneous character"
-                                        + " Sequence contain only _ ");
+                                        + " Sequence contain only " + peek);
                                 return null;
                             }
                     }
@@ -209,9 +208,9 @@ public class Lexer {
                         readch(br);
                         if (Character.isDigit(peek)) {
                             System.err.println("Erroneous character"
-                                    + " Sequence start with number 0");
+                                    + " Sequence start with number 0 " + peek);
                             return null;
-                        } 
+                        }
                     } else {
                         while (Character.isDigit(peek)) {
                             tmp += Character.toString(peek);
@@ -219,7 +218,7 @@ public class Lexer {
                         }
                         if (Character.isLetter(peek) || peek == '_') {
                             System.err.println("Erroneous character"
-                                    + " Sequence start with number ");
+                                    + " Sequence start with number " + peek);
                             return null;
                         }
                     }
