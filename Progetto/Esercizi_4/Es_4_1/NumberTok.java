@@ -1,5 +1,3 @@
-package Progetto.Esercizi_4.Es_4_1;
-
 public class NumberTok extends Token {
     public int lexeme;
 

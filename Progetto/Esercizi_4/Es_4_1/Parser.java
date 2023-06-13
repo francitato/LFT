@@ -1,5 +1,3 @@
-package Progetto.Esercizi_4.Es_4_1;
-
 import java.io.*;
 
 public class Parser {

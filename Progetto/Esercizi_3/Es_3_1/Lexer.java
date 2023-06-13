@@ -1,5 +1,3 @@
-package Progetto.Esercizi_3.Es_3_1;
-
 import java.io.*;
 
 public class Lexer {
@@ -72,24 +70,23 @@ public class Lexer {
                     }
                     return lexical_scan(br);
                 } else if (peek == '*') {
-                    readch(br);
                     boolean closed = false;
-                    while (!closed && peek != (char) -1) {
+                    while (peek == '\n' || !closed && peek != (char) -1) {
+                        readch(br);
                         if (peek == '*') {
                             readch(br);
-                            if (peek == '/') {
+                            if (peek == '/')
                                 closed = true;
-                            }
                         }
-                        readch(br);
-                    }
-                    if (!closed && peek == (char) -1) {
-                        System.err.println("Comment not closed ");
-                        return null;
-                    } else {
-                        return lexical_scan(br);
                     }
 
+                    if (!closed) {
+                        System.err.println("Comment not closed");
+                        return null;
+                    } else {
+                        readch(br);
+                        return lexical_scan(br);
+                    }
                 } else {
                     peek = ' ';
                     return Word.lt;
@@ -201,19 +198,29 @@ public class Lexer {
                                 return new Word(Tag.ID, tmp);
                             } else {
                                 System.err.println("Erroneous character"
-                                        + " Sequence contain only _ ");
+                                        + " Sequence contain only " + peek);
                                 return null;
                             }
                     }
                 } else if (Character.isDigit(peek)) {
-                    while (Character.isDigit(peek)) {
-                        tmp += Character.toString(peek);
+                    if (peek == '0') {
+                        tmp = tmp + peek;
                         readch(br);
-                    }
-                    if (Character.isLetter(peek) || peek == '_') {
-                        System.err.println("Erroneous character"
-                                + " Sequence start with number ");
-                        return null;
+                        if (Character.isDigit(peek)) {
+                            System.err.println("Erroneous character"
+                                    + " Sequence start with number 0 " + peek);
+                            return null;
+                        }
+                    } else {
+                        while (Character.isDigit(peek)) {
+                            tmp += Character.toString(peek);
+                            readch(br);
+                        }
+                        if (Character.isLetter(peek) || peek == '_') {
+                            System.err.println("Erroneous character"
+                                    + " Sequence start with number " + peek);
+                            return null;
+                        }
                     }
                     return new NumberTok(Tag.NUM, Integer.parseInt(tmp));
                 } else {
@@ -226,7 +233,7 @@ public class Lexer {
 
     public static void main(String[] args) {
         Lexer lex = new Lexer();
-        String path = "Esercizi/Esercizi_3/Es_3_1/input.txt";
+        String path = "Esercizi/Esercizi_3/Es_3_2/input.txt";
         try {
             BufferedReader br = new BufferedReader(new FileReader(path));
             Token tok;
@@ -239,5 +246,4 @@ public class Lexer {
             e.printStackTrace();
         }
     }
-
 }

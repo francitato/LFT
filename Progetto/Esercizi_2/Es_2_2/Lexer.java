@@ -1,5 +1,3 @@
-package Progetto.Esercizi_2.Es_2_2;
-
 import java.io.*;
 
 public class Lexer {
@@ -174,19 +172,29 @@ public class Lexer {
                                 return new Word(Tag.ID, tmp);
                             } else {
                                 System.err.println("Erroneous character"
-                                        + " Sequence contain only _ ");
+                                        + " Sequence contain only " + peek);
                                 return null;
                             }
                     }
                 } else if (Character.isDigit(peek)) {
-                    while (Character.isDigit(peek)) {
-                        tmp += Character.toString(peek);
+                    if (peek == '0') {
+                        tmp = tmp + peek;
                         readch(br);
-                    }
-                    if (Character.isLetter(peek) || peek == '_') {
-                        System.err.println("Erroneous character"
-                                + " Sequence start with number ");
-                        return null;
+                        if (Character.isDigit(peek)) {
+                            System.err.println("Erroneous character"
+                                    + " Sequence start with number 0 " + peek);
+                            return null;
+                        }
+                    } else {
+                        while (Character.isDigit(peek)) {
+                            tmp += Character.toString(peek);
+                            readch(br);
+                        }
+                        if (Character.isLetter(peek) || peek == '_') {
+                            System.err.println("Erroneous character"
+                                    + " Sequence start with number " + peek);
+                            return null;
+                        }
                     }
                     return new NumberTok(Tag.NUM, Integer.parseInt(tmp));
                 } else {

@@ -1,5 +1,3 @@
-package Progetto.Esercizi_2.Es_2_1;
-
 public class Token {
     public final int tag;
 

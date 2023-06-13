@@ -1,5 +1,3 @@
-package Progetto.Esercizi_4.Es_4_1;
-
 public class Word extends Token {
     public String lexeme = "";
 
